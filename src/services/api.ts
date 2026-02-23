@@ -60,7 +60,9 @@ export const runIntegratedAnalysis = async (request: AnalysisRequest): Promise<s
         request.history || "Not provided.",
         request.examination || "Not provided.",
         primaryFile as unknown, // Cast for gradio client types
-        request.audioBlob as unknown // Cast for gradio client types
+        request.audioBlob as unknown, // Cast for gradio client types
+        0.2, // Temperature
+        2000 // Max Tokens
       ]);
       
       // The return value is typically an array matching the Gradio outputs `[string]`

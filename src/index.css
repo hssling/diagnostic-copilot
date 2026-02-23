@@ -419,3 +419,42 @@ textarea.form-control {
   accent-color: var(--primary);
   cursor: pointer;
 }
+
+/* Print Styles for PDF Export */
+@media print {
+  body {
+    background-color: white !important;
+    color: black !important;
+  }
+  .sidebar, .header, .modal-overlay, .panel-header:first-child button, .loading-spinner, .file-remove, .dropzone, .btn, .audio-controls {
+    display: none !important;
+  }
+  .app-container, .main-content, .content-area {
+    display: block !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+  .panel {
+    border: none !important;
+    box-shadow: none !important;
+  }
+  .panel-header {
+    background-color: transparent !important;
+    color: black !important;
+    border-bottom: 2px solid black !important;
+  }
+  .results-markdown h1, .results-markdown h2, .results-markdown h3, .results-markdown strong, .form-label {
+    color: black !important;
+    border-color: black !important;
+  }
+  .form-control {
+    border: none !important;
+    padding: 0 !important;
+    background: transparent !important;
+    color: black !important;
+    resize: none !important;
+  }
+  .print-area {
+    padding: 0 !important;
+  }
+}

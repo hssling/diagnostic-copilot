@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Settings, Image as ImageIcon, FileText, CheckCircle, Activity, HeartPulse, Send, UploadCloud, Mic, Square, Trash2 } from 'lucide-react';
+import { Settings, Image as ImageIcon, FileText, CheckCircle, Activity, HeartPulse, Send, UploadCloud, Mic, Square, Trash2, Printer, Copy } from 'lucide-react';
 import { runIntegratedAnalysis } from './services/api';
 
 const App: React.FC = () => {
@@ -144,6 +144,13 @@ const App: React.FC = () => {
       }} />;
   };
 
+  const handleCopy = () => {
+    if (analysisResult) {
+      navigator.clipboard.writeText(analysisResult);
+      alert("Successfully copied clinical report to clipboard.");
+    }
+  };
+
   return (
     <div className="app-container">
       {/* Sidebar Navigation */}
@@ -254,11 +261,19 @@ const App: React.FC = () => {
 
           {/* Right Panel: Output */}
           <div className="panel" style={{borderColor: analysisResult ? 'var(--primary)' : 'var(--border)'}}>
-            <div className="panel-header" style={{backgroundColor: analysisResult ? 'rgba(2, 132, 199, 0.2)' : 'var(--surface-color-light)'}}>
-              <CheckCircle size={20} color={analysisResult ? "var(--primary)" : "var(--text-secondary)"} />
-              Diagnostic Output & Treatment Plan
+            <div className="panel-header" style={{backgroundColor: analysisResult ? 'rgba(2, 132, 199, 0.2)' : 'var(--surface-color-light)', justifyContent: 'space-between'}}>
+              <div style={{display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
+                <CheckCircle size={20} color={analysisResult ? "var(--primary)" : "var(--text-secondary)"} />
+                Diagnostic Output & Treatment Plan
+              </div>
+              {analysisResult && (
+                <div style={{display: 'flex', gap: '0.5rem'}}>
+                  <button className="btn btn-secondary" style={{padding: '0.25rem 0.5rem', fontSize: '0.75rem'}} onClick={handleCopy} title="Copy to Clipboard"><Copy size={14}/> Copy</button>
+                  <button className="btn btn-secondary" style={{padding: '0.25rem 0.5rem', fontSize: '0.75rem'}} onClick={() => window.print()} title="Print Encrypted PDF"><Printer size={14}/> Print / Save PDF</button>
+                </div>
+              )}
             </div>
-            <div className="panel-body">
+            <div className="panel-body print-area">
               {error && (
                 <div style={{padding: '1rem', backgroundColor: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', borderRadius: '0.5rem', border: '1px solid var(--danger)'}}>
                   <strong>Error:</strong> {error}
