@@ -58,7 +58,7 @@ Format your output with the following major sections exactly (using ## headings)
   }
 
   // 2. Prepare parts array for Gemini
-  const parts: any[] = [{ text: promptText }];
+  const parts: Array<{text?: string, inlineData?: {data: string, mimeType: string}}> = [{ text: promptText }];
 
   // Prepare images/pdfs
   for (const file of request.files) {
