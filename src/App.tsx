@@ -14,8 +14,8 @@ const App: React.FC = () => {
   // Settings State
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [apiKey, setApiKey] = useState(localStorage.getItem('geminiApiKey') || '');
-  const [modelType, setModelType] = useState(localStorage.getItem('modelType') || 'gemini-2.5-flash');
-  const [customHfSpace, setCustomHfSpace] = useState(localStorage.getItem('customHfSpace') || '');
+  const [modelType, setModelType] = useState(localStorage.getItem('modelType') || 'hf-space:custom');
+  const [customHfSpace, setCustomHfSpace] = useState(localStorage.getItem('customHfSpace') || 'hssling/diagnostic-copilot-api');
   const [donateData, setDonateData] = useState(false);
 
   useEffect(() => {
