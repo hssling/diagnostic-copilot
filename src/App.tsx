@@ -14,8 +14,17 @@ const App: React.FC = () => {
   // Settings State
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [apiKey, setApiKey] = useState(localStorage.getItem('geminiApiKey') || '');
-  const [model, setModel] = useState('gemini-2.5-flash');
+  const [modelType, setModelType] = useState(localStorage.getItem('modelType') || 'gemini-2.5-flash');
+  const [customHfSpace, setCustomHfSpace] = useState(localStorage.getItem('customHfSpace') || '');
   const [donateData, setDonateData] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem('modelType', modelType);
+  }, [modelType]);
+
+  useEffect(() => {
+    localStorage.setItem('customHfSpace', customHfSpace);
+  }, [customHfSpace]);
 
   // Analysis State
   const [isLoading, setIsLoading] = useState(false);
@@ -91,7 +100,10 @@ const App: React.FC = () => {
 
   // Run AI Analysis
   const handleAnalyze = async () => {
-    if (!apiKey) {
+    const isHfModel = modelType === 'hf-space:custom';
+    const computedModel = isHfModel ? `hf-space:${customHfSpace}` : modelType;
+
+    if (!apiKey && !isHfModel) {
       setIsSettingsOpen(true);
       setError("Please add an API Key first.");
       return;
@@ -107,7 +119,7 @@ const App: React.FC = () => {
         files,
         audioBlob,
         apiKey,
-        model,
+        model: computedModel,
         donateData
       });
       setAnalysisResult(result);
@@ -285,17 +297,34 @@ const App: React.FC = () => {
             </div>
             <div className="modal-body">
                <div className="form-group" style={{marginBottom: '1rem'}}>
-                  <label className="form-label">Gemini API Key</label>
-                  <input type="password" placeholder="AIZA..." className="form-control" value={apiKey} onChange={e => setApiKey(e.target.value)} />
+                  <label className="form-label">API Key / HF Token (Optional for some public Spaces)</label>
+                  <input type="password" placeholder="AIZA... or hf_..." className="form-control" value={apiKey} onChange={e => setApiKey(e.target.value)} />
                </div>
-               <div className="form-group">
-                  <label className="form-label">Inference Model</label>
-                  <select className="form-control" value={model} onChange={e => setModel(e.target.value)}>
-                    <option value="gemini-2.5-flash">Gemini 2.5 Flash (Fast, Multimodal)</option>
-                    <option value="gemini-2.5-pro">Gemini 2.5 Pro (Advanced Reasoning, Multimodal)</option>
-                    <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+               <div className="form-group" style={{marginBottom: '1rem'}}>
+                  <label className="form-label">Inference Target</label>
+                  <select className="form-control" value={modelType} onChange={e => setModelType(e.target.value)}>
+                    <option value="gemini-2.5-flash">Gemini 2.5 Flash (Google Cloud)</option>
+                    <option value="gemini-2.5-pro">Gemini 2.5 Pro (Google Cloud)</option>
+                    <option value="gemini-1.5-pro">Gemini 1.5 Pro (Google Cloud)</option>
+                    <option value="hf-space:custom">Custom Hugging Face Space Endpoint</option>
                   </select>
                </div>
+               
+               {modelType === 'hf-space:custom' && (
+                 <div className="form-group" style={{marginBottom: '1rem', padding: '1rem', backgroundColor: 'var(--surface-color-light)', borderRadius: '0.5rem', border: '1px solid var(--primary)'}}>
+                    <label className="form-label">Hugging Face Space ID</label>
+                    <input 
+                      type="text" 
+                      placeholder="e.g., your-username/diagnostic-copilot" 
+                      className="form-control" 
+                      value={customHfSpace} 
+                      onChange={e => setCustomHfSpace(e.target.value)} 
+                    />
+                    <div style={{fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.5rem'}}>
+                      Connect your trained PEFT multi-modal model endpoint hosted on Hugging Face Spaces.
+                    </div>
+                 </div>
+               )}
             </div>
             <div className="modal-footer">
                <button className="btn btn-primary" onClick={() => setIsSettingsOpen(false)}>Save & Close</button>

@@ -35,11 +35,45 @@ const fileToGenerativePart = async (file: File | Blob, mimeType: string): Promis
   });
 };
 
+import { Client } from "@gradio/client";
+
 export const runIntegratedAnalysis = async (request: AnalysisRequest): Promise<string> => {
-  if (!request.apiKey) {
+  if (!request.apiKey && !request.model.startsWith("hf-space:")) {
+    // Note: Some public HF Spaces don't require API keys, but generally best practice.
     throw new Error("API Key is missing. Please configure it in settings.");
   }
 
+  // Handle Hugging Face Interface (Custom Fine-tuned Models Hosted via Gradio)
+  if (request.model.startsWith("hf-space:")) {
+    try {
+      const spaceId = request.model.replace("hf-space:", "");
+      console.log(`Connecting to Hugging Face Space: ${spaceId}`);
+      
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const connectOptions = request.apiKey ? { hf_token: request.apiKey } as any : {};
+      const app = await Client.connect(spaceId, connectOptions);
+      
+      // Select the first image for the Gradio endpoint (most vision models take 1 primary at a time natively)
+      const primaryFile = request.files.length > 0 ? request.files[0] : null;
+      
+      const result = await app.predict("/predict", [
+        request.history || "Not provided.",
+        request.examination || "Not provided.",
+        primaryFile as unknown, // Cast for gradio client types
+        request.audioBlob as unknown // Cast for gradio client types
+      ]);
+      
+      // The return value is typically an array matching the Gradio outputs `[string]`
+      return (result.data as string[])[0] as string;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new Error(`Hugging Face Space Error: ${error.message || "Failed to reach Space. It might be asleep/building."}`);
+      }
+      throw new Error("Hugging Face Space Error: Failed to reach Space. It might be asleep/building.");
+    }
+  }
+
+  // Handle Google Gemini Interface
   // 1. Construct prompt
   let promptText = `You are a highly advanced Multi-Modal Diagnostic Co-Pilot Medical AI.
 Your task is to analyze the provided clinical data (History, Examination, Diagnostics, Scans, Audio constraints) and output a structured, integrated clinical report using Markdown.
