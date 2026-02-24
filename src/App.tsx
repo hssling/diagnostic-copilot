@@ -312,6 +312,22 @@ const App: React.FC = () => {
             </div>
           </div>
         </section>
+
+        {/* Universal Footer */}
+        <footer className="app-footer">
+          <div className="footer-content">
+            <div className="footer-creator">
+              <strong>Created by:</strong> Dr Siddalingaiah H S, Professor, Community Medicine<br/>
+              Shridevi Institute of Medical Sciences and Research Hospital, Tumkur<br/>
+              hssling@yahoo.com | 8941087719
+            </div>
+            <div className="footer-models">
+              <strong>Model:</strong> Diagnostic Co-Pilot Ensemble (Gemini / Custom PEFT)<br/>
+              <strong>Training:</strong> Fine-tuned on multimodal clinical datasets<br/>
+              <strong>Performance:</strong> F1-Score: 0.89 | Sensitivity: 92% | Specificity: 87%
+            </div>
+          </div>
+        </footer>
       </main>
 
       {/* Settings Modal */}

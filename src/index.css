@@ -546,3 +546,35 @@ textarea.form-control {
     display: none;
   }
 }
+
+/* Universal Footer */
+.app-footer {
+  margin-top: auto;
+  padding: 1rem 2rem;
+  background-color: var(--surface-color);
+  border-top: 1px solid var(--border);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+.footer-creator strong, .footer-models strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .footer-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+}
+
