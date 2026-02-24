@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Settings, Image as ImageIcon, FileText, CheckCircle, Activity, HeartPulse, Send, UploadCloud, Mic, Square, Trash2, Printer, Copy } from 'lucide-react';
+import { Settings, Image as ImageIcon, FileText, CheckCircle, Activity, HeartPulse, Send, UploadCloud, Mic, Square, Trash2, Printer, Copy, Menu, X } from 'lucide-react';
 import { runIntegratedAnalysis } from './services/api';
 
 const App: React.FC = () => {
@@ -17,6 +17,7 @@ const App: React.FC = () => {
   const [modelType, setModelType] = useState(localStorage.getItem('modelType') || 'hf-space:custom');
   const [customHfSpace, setCustomHfSpace] = useState(localStorage.getItem('customHfSpace') || 'hssling/diagnostic-copilot-api');
   const [donateData, setDonateData] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     localStorage.setItem('modelType', modelType);
@@ -154,12 +155,18 @@ const App: React.FC = () => {
   return (
     <div className="app-container">
       {/* Sidebar Navigation */}
-      <aside className="sidebar">
-        <h1><Activity color="var(--primary)" size={28} /> Co-Pilot AI</h1>
+      <div className={`sidebar-overlay ${isSidebarOpen ? 'open' : ''}`} onClick={() => setIsSidebarOpen(false)}></div>
+      <aside className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+          <h1><Activity color="var(--primary)" size={28} /> Co-Pilot AI</h1>
+          <button className="mobile-only sidebar-close-btn" onClick={() => setIsSidebarOpen(false)}>
+            <X size={24} color="var(--text-secondary)" />
+          </button>
+        </div>
         <nav className="sidebar-nav">
-          <button className="nav-item active"><HeartPulse size={20}/> New Case Analysis</button>
-          <button className="nav-item"><FileText size={20}/> Case History</button>
-          <button className="nav-item" onClick={() => setIsSettingsOpen(true)}><Settings size={20}/> Configuration</button>
+          <button className="nav-item active" onClick={() => setIsSidebarOpen(false)}><HeartPulse size={20}/> New Case Analysis</button>
+          <button className="nav-item" onClick={() => setIsSidebarOpen(false)}><FileText size={20}/> Case History</button>
+          <button className="nav-item" onClick={() => { setIsSettingsOpen(true); setIsSidebarOpen(false); }}><Settings size={20}/> Configuration</button>
         </nav>
         
         <div style={{marginTop: 'auto'}}>
@@ -173,11 +180,16 @@ const App: React.FC = () => {
       {/* Main Container */}
       <main className="main-content">
         <header className="header">
-          <div className="header-title">Multi-Modal Diagnostic Co-Pilot</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <button className="mobile-only menu-btn" onClick={() => setIsSidebarOpen(true)}>
+              <Menu size={24} color="var(--text-primary)" />
+            </button>
+            <div className="header-title">Diagnostic Co-Pilot</div>
+          </div>
           <div className="header-actions">
-            <button className="btn btn-secondary" onClick={() => setIsSettingsOpen(true)}>Settings</button>
-            <button className="btn btn-primary" onClick={handleAnalyze} disabled={isLoading}>
-              {isLoading ? <span className="loading-spinner"></span> : <><Send size={16}/> Integrate & Analyze</>}
+            <button className="btn btn-secondary hide-mobile" onClick={() => setIsSettingsOpen(true)}>Settings</button>
+            <button className="btn btn-primary analyze-btn" onClick={handleAnalyze} disabled={isLoading}>
+              {isLoading ? <span className="loading-spinner"></span> : <><Send size={16}/> <span className="btn-text">Integrate & Analyze</span></>}
             </button>
           </div>
         </header>
